@@ -1,0 +1,12 @@
+<?php
+
+<% if @db_su %>
+$conf['db-su'] = '<%= @db_su %>';
+<% end %>
+<% if @db_su_pw %>
+$conf['db-su-pw'] = '<%= @db_su_pw %>';
+<% end %>
+
+$options['include'] = array(
+    __DIR__ . '/commands',
+);

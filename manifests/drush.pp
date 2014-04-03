@@ -1,5 +1,9 @@
 
-class lcphp::drush($version = 'master') {
+class lcphp::drush(
+  $version = 'master',
+  $db_su = undef,
+  $sb_su_pw = undef
+) {
 
   include composer
 
@@ -14,5 +18,16 @@ class lcphp::drush($version = 'master') {
     ensure => 'link',
     target => '/usr/share/drush/drush',
     require => Composer::Project['drush']
+  }
+
+  if(!defined(File['/etc/drush/drushrc.php'])) {
+    file { "/etc/drush":
+      ensure => directory
+    }
+    file { "/etc/drush/drushrc.php":
+      ensure => file,
+      content => template("lcphp/drushrc.php.erb"),
+      require => File['/etc/drush']
+    }
   }
 }
