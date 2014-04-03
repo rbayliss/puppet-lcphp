@@ -2,7 +2,7 @@
 class lcphp::drush(
   $version = 'master',
   $db_su = undef,
-  $sb_su_pw = undef
+  $db_su_pw = undef
 ) {
 
   include composer
