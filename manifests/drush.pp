@@ -24,6 +24,9 @@ class lcphp::drush(
     file { "/etc/drush":
       ensure => directory
     }
+    file { "/etc/drush/commands":
+      ensure => directory
+    }
     file { "/etc/drush/drushrc.php":
       ensure => file,
       content => template("lcphp/drushrc.php.erb"),
