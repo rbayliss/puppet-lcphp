@@ -21,6 +21,7 @@ class lcphp (
     "mysql":;
     "curl":;
     "gd":;
+    "sqlite":;
   }
   # Set the PHP memory limit:
   php::augeas { "php-memorylimit":
