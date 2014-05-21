@@ -1,7 +1,8 @@
 # Installs PHP packages
 class lcphp (
   $memory_limit = '256M',
-  $apc_shm_size = '256M'
+  $apc_shm_size = '256M',
+  $max_filesize = '8M'
   ) {
 
   # Install Apache
@@ -22,11 +23,21 @@ class lcphp (
     "curl":;
     "gd":;
   }
+
   # Set the PHP memory limit:
-  php::augeas { "php-memorylimit":
-    entry  => 'PHP/memory_limit',
-    value  => $memory_limit,
+  Php::Augeas {
     notify => Class['apache::service']
+  }
+  php::augeas {
+    "php-memorylimit":
+      entry  => 'PHP/memory_limit',
+      value  => $memory_limit;
+    "php-upload_max_filesize":
+      entry => "PHP/upload_max_filesize",
+      value => $max_filesize;
+    "php-post_max_size":
+      entry => "PHP/post_max_size",
+      value => $max_filesize;
   }
 
   # Install APC from PECL
