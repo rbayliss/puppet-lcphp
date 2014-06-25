@@ -12,6 +12,7 @@ class lcphp (
   }
   include apache::mod::rewrite
   include apache::mod::php
+  include apache::mod::headers
 
   # Install PHP
   class { "php":
