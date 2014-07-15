@@ -1,9 +1,26 @@
 # Installs PHP packages
 class lcphp (
   $memory_limit = '256M',
-  $apc_shm_size = '256M',
-  $max_filesize = '8M'
+  $opcache_size = undef,
+  $apc_shm_size = undef, #deprecated param
+  $max_filesize = '8M',
+  $version = 'system'
   ) {
+
+  if $opcache_size == undef {
+    if $apc_shm_size != undef {
+      $opcache_size = $apc_shm_size
+    }
+    else {
+      fail("Opcache size must be defined.")
+    }
+  }
+
+
+  class { "lcphp::version":
+    before => Class['php'],
+    version => $version
+  }
 
   # Install Apache
   class { "apache":
@@ -28,6 +45,7 @@ class lcphp (
 
   # Set the PHP memory limit:
   Php::Augeas {
+    require => Class['php'],
     notify => Class['apache::service']
   }
   php::augeas {
@@ -42,18 +60,8 @@ class lcphp (
       value => $max_filesize;
   }
 
-  # Install APC from PECL
-  package { "libpcre3-dev": }
-  php::pecl::module{ "apc":
-    use_package => "no",
-    config_file => '/etc/php5/conf.d/apc.ini',
-    require => Package['libpcre3-dev']
-  }
-  # Set the APC memory limit:
-  file_line { "apc_memory":
-    path => '/etc/php5/conf.d/apc.ini',
-    line => "apc.shm_size=${apc_shm_size}",
-    match => "apc.shm_size",
-    require => Php::Pecl::Module['apc']
+  class { "lcphp::opcache":
+    version => $version,
+    size => $opcache_size
   }
 }
