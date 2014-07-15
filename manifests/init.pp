@@ -1,20 +1,11 @@
 # Installs PHP packages
 class lcphp (
   $memory_limit = '256M',
-  $opcache_size = undef,
-  $apc_shm_size = undef, #deprecated param
+  $opcache_size = '256M',
+  $apc_shm_size = '256M',
   $max_filesize = '8M',
   $version = 'system'
   ) {
-
-  if $opcache_size == undef {
-    if $apc_shm_size != undef {
-      $opcache_size = $apc_shm_size
-    }
-    else {
-      fail("Opcache size must be defined.")
-    }
-  }
 
 
   class { "lcphp::version":
@@ -62,6 +53,7 @@ class lcphp (
 
   class { "lcphp::opcache":
     version => $version,
-    size => $opcache_size
+    apc_shm_size => $apc_shm_size,
+    opcache_size => $opcache_size
   }
 }

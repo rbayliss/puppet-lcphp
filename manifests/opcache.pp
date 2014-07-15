@@ -1,8 +1,17 @@
 
-class lcphp::apc($version, $size) {
+class lcphp::opcache(
+  $version = 'system',
+  $apc_shm_size = '256M',
+  $opcache_size = '256M'
+) {
   case $version {
     '5.5': {
-      notify{ "Here I install the opcache"}
+      file_line { "opcache_memory":
+        path => '/etc/php5/apache2/conf.d/05-opcache.ini',
+        line => "opcache.memory_consumption=${opcache_size}",
+        match => 'opcache.memory_consumption',
+        require => Class['php'],
+      }
     }
     default: {
       # Install APC from PECL
@@ -15,7 +24,7 @@ class lcphp::apc($version, $size) {
       # Set the APC memory limit:
       file_line { "apc_memory":
         path => '/etc/php5/conf.d/apc.ini',
-        line => "apc.shm_size=${$shm_size}",
+        line => "apc.shm_size=${apc_shm_size}",
         match => "apc.shm_size",
         require => Php::Pecl::Module['apc']
       }
